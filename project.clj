@@ -40,21 +40,21 @@
                  [thheller/shadow-cljs "2.20.3" :scope "provided"]]
 
   :min-lein-version "2.0.0"
-  
+
   :source-paths ["src/clj" "src/cljs" "src/cljc"]
   :test-paths ["test/clj"]
   :resource-paths ["resources" "target/cljsbuild"]
   :target-path "target/%s/"
   :main ^:skip-aot gadget.core
 
-  :plugins [] 
+  :plugins []
   :clean-targets ^{:protect false}
   [:target-path "target/cljsbuild"]
-  
+
 
   :profiles
   {:uberjar {:omit-source true
-             
+
              :prep-tasks ["compile" ["run" "-m" "shadow.cljs.devtools.cli" "release" "app"]]
              :aot :all
              :uberjar-name "gadget.jar"
@@ -75,9 +75,9 @@
                                  [ring/ring-mock "0.4.0"]]
                   :plugins      [[com.jakemccrary/lein-test-refresh "0.24.1"]
                                  [jonase/eastwood "1.2.4"]
-                                 [cider/cider-nrepl "0.26.0"]] 
-                  
-                  
+                                 [cider/cider-nrepl "0.28.5"]]
+
+
                   :source-paths ["env/dev/clj"  "env/dev/cljs" "test/cljs" ]
                   :resource-paths ["env/dev/resources"]
                   :repl-options {:init-ns user
@@ -85,9 +85,9 @@
                   :injections [(require 'pjstadig.humane-test-output)
                                (pjstadig.humane-test-output/activate!)]}
    :project/test {:jvm-opts ["-Dconf=test-config.edn" ]
-                  :resource-paths ["env/test/resources"] 
-                  
-                  
+                  :resource-paths ["env/test/resources"]
+
+
                   }
    :profiles/dev {}
    :profiles/test {}})

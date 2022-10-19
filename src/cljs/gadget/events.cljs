@@ -31,17 +31,32 @@
     (assoc db :docs docs)))
 
 (rf/reg-event-fx
-  :fetch-docs
-  (fn [_ _]
-    {:http-xhrio {:method          :get
-                  :uri             "/docs"
-                  :response-format (ajax/raw-response-format)
-                  :on-success       [:set-docs]}}))
+ :fetch-docs
+ (fn [_ _]
+   {:http-xhrio {:method          :get
+                 :uri             "/docs"
+                 :response-format (ajax/raw-response-format)
+                 :on-success       [:set-docs]}}))
 
 (rf/reg-event-db
-  :common/set-error
-  (fn [db [_ error]]
-    (assoc db :common/error error)))
+ :update-hello
+ (fn [db [_ data]]
+   (let [time (-> db :hello :time (or 0))]
+     (assoc db :hello {:data data
+                       :time (inc time)}))))
+
+(rf/reg-event-fx
+ :fetch-hello
+ (fn [_ _]
+   {:http-xhrio {:method :get
+                 :uri "/api/hello"
+                 :response-format (ajax/raw-response-format)
+                 :on-success [:update-hello]}}))
+
+(rf/reg-event-db
+ :common/set-error
+ (fn [db [_ error]]
+   (assoc db :common/error error)))
 
 (rf/reg-event-fx
   :page/init-home
@@ -71,6 +86,11 @@
   :docs
   (fn [db _]
     (:docs db)))
+
+(rf/reg-sub
+ :hello
+ (fn [db _]
+   (:hello db)))
 
 (rf/reg-sub
   :common/error

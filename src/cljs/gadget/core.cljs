@@ -40,7 +40,10 @@
 
 (defn about-page []
   [:section.section>div.container>div.content
-   [:img {:src "/img/warning_clojure.png"}]])
+   [:img {:src "/img/warning_clojure.png"
+          :on-click #(rf/dispatch [:fetch-hello])}]
+   (when-let [hello @(rf/subscribe [:hello])]
+     [:h1 (:data  hello) " " (:time hello)])])
 
 (defn home-page []
   [:section.section>div.container>div.content
