@@ -1,9 +1,10 @@
 (ns gadget.events
   (:require
-    [re-frame.core :as rf]
-    [ajax.core :as ajax]
-    [reitit.frontend.easy :as rfe]
-    [reitit.frontend.controllers :as rfc]))
+   [re-frame.core :as rf]
+   [ajax.core :as ajax]
+   [ajax.edn :refer [edn-response-format]]
+   [reitit.frontend.easy :as rfe]
+   [reitit.frontend.controllers :as rfc]))
 
 ;;dispatchers
 
@@ -41,8 +42,9 @@
 (rf/reg-event-db
  :update-hello
  (fn [db [_ data]]
+   (println "update-hello" data)
    (let [time (-> db :hello :time (or 0))]
-     (assoc db :hello {:data data
+     (assoc db :hello {:data (:message data)
                        :time (inc time)}))))
 
 (rf/reg-event-fx
@@ -50,7 +52,7 @@
  (fn [_ _]
    {:http-xhrio {:method :get
                  :uri "/api/hello"
-                 :response-format (ajax/raw-response-format)
+                 :response-format (edn-response-format)
                  :on-success [:update-hello]}}))
 
 (rf/reg-event-db

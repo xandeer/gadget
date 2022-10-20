@@ -3,9 +3,9 @@
    [gadget.middleware :as middleware]
    [ring.util.http-response :as response]))
 
-(defn api-routes []
-  [""
+(def api-routes
+  ["/api"
    {:middleware [middleware/wrap-formats]}
-   ["/api/hello" {:get (fn [_]
-                         (-> (response/ok "hello")
-                             (response/header "Content-Type" "text/plain; charset=utf-8")))}]])
+   ["/hello" {:get (fn [_]
+                     {:status 200
+                      :body {:message "hello"}})}]])

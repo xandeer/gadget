@@ -24,7 +24,7 @@
   (ring/ring-handler
    (ring/router
     [(home-routes)
-     (api-routes)])
+     api-routes])
    (ring/routes
     (ring/create-resource-handler
      {:path "/"})
