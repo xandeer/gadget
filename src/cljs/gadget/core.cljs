@@ -36,7 +36,7 @@
        [nav-link "#/" "Home" :home]
        [nav-link "#/about" "About" :about]
        ;; just try hot-reloading this
-       [nav-link "#/blog" "Blog" :blog]]]]))
+       [nav-link "#/clipboard" "Clipboard" :clipboard]]]]))
 
 (defn about-page []
   [:section.section>div.container>div.content
@@ -44,6 +44,13 @@
           :on-click #(rf/dispatch [:fetch-hello])}]
    (when-let [hello @(rf/subscribe [:hello])]
      [:h1 (:data  hello) " " (:time hello)])])
+
+(defn clipboard-page []
+  [:section.section>div.container>div.content
+   (when-let [clipboard @(rf/subscribe [:clipboard])]
+     [:div
+      [:h1 "Clipboard"]
+      [:div clipboard]])])
 
 (defn home-page []
   [:section.section>div.container>div.content
@@ -61,11 +68,14 @@
 
 (def router
   (reitit/router
-    [["/" {:name        :home
-           :view        #'home-page
-           :controllers [{:start (fn [_] (rf/dispatch [:page/init-home]))}]}]
-     ["/about" {:name :about
-                :view #'about-page}]]))
+   [["/" {:name :home
+          :view #'home-page
+          :controllers [{:start (fn [_] (rf/dispatch [:page/init-home]))}]}]
+    ["/about" {:name :about
+               :view #'about-page}]
+    ["/clipboard" {:name :clipboard
+                   :view #'clipboard-page
+                   :controllers [{:start (fn [_] (rf/dispatch [:page/init-clipboard]))}]}]]))
 
 (defn start-router! []
   (rfe/start!

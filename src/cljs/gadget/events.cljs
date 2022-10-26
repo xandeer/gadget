@@ -56,6 +56,19 @@
                  :on-success [:update-hello]}}))
 
 (rf/reg-event-db
+ :update-clipboard
+ (fn [db [_ data]]
+   (assoc db :clipboard (:text data))))
+
+(rf/reg-event-fx
+ :fetch-clipboard
+ (fn [_ _]
+   {:http-xhrio {:method :get
+                 :uri "/api/clipboard"
+                 :response-format (edn-response-format)
+                 :on-success [:update-clipboard]}}))
+
+(rf/reg-event-db
  :common/set-error
  (fn [db [_ error]]
    (assoc db :common/error error)))
@@ -65,12 +78,17 @@
   (fn [_ _]
     {:dispatch [:fetch-docs]}))
 
+(rf/reg-event-fx
+ :page/init-clipboard
+ (fn [_ _]
+   {:dispatch [:fetch-clipboard]}))
+
 ;;subscriptions
 
 (rf/reg-sub
-  :common/route
-  (fn [db _]
-    (-> db :common/route)))
+ :common/route
+ (fn [db _]
+   (-> db :common/route)))
 
 (rf/reg-sub
   :common/page-id
@@ -95,6 +113,11 @@
    (:hello db)))
 
 (rf/reg-sub
-  :common/error
-  (fn [db _]
-    (:common/error db)))
+ :clipboard
+ (fn [db _]
+   (:clipboard db)))
+
+(rf/reg-sub
+ :common/error
+ (fn [db _]
+   (:common/error db)))

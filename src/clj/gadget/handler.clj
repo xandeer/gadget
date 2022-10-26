@@ -18,7 +18,6 @@
   ([_] nil)
   ([_ respond _] (respond nil)))
 
-
 (mount/defstate app-routes
   :start
   (ring/ring-handler
