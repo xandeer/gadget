@@ -83,6 +83,14 @@
  (fn [_ _]
    {:dispatch [:fetch-clipboard]}))
 
+(rf/reg-event-fx
+ :copy-clipboard
+ (fn [_ _]
+   (-> js/window
+       .getSelection
+       (.selectAllChildren
+        (.getElementById js/document "clipboard")))))
+
 ;;subscriptions
 
 (rf/reg-sub

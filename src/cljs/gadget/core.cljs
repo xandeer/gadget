@@ -50,7 +50,7 @@
    (when-let [clipboard @(rf/subscribe [:clipboard])]
      [:div
       [:h1 "Clipboard"]
-      [:div clipboard]])])
+      [:div#clipboard {:on-click #(rf/dispatch [:copy-clipboard])} clipboard]])])
 
 (defn home-page []
   [:section.section>div.container>div.content
