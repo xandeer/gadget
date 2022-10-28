@@ -69,6 +69,33 @@
                  :on-success [:update-clipboard]}}))
 
 (rf/reg-event-db
+ :update-send-text
+ (fn [db [_ data]]
+   (assoc db :send-text data)))
+
+(rf/reg-event-fx
+ :set-clipboard-text
+ (fn [_ [_ text]]
+   {:dispatch [:update-send-text {:text text}]}))
+
+(rf/reg-event-db
+ :api-error
+ (fn [db [_ error]]
+   {:dispatch [:toast-message (str "API error: " error)]}))
+
+(rf/reg-event-fx
+ :send-clipboard-text
+ (fn [{:keys [db]} [_ _]]
+   (when-let [text (:send-text db)]
+     {:http-xhrio {:method :post
+                   :uri "/api/clipboard"
+                   :params text
+                   :response-format (edn-response-format)
+                   :format (ajax/json-request-format)
+                   :on-success [:update-clipboard]
+                   :on-failure [:api-error {:error "send-clipboard"}]}})))
+
+(rf/reg-event-db
  :common/set-error
  (fn [db [_ error]]
    (assoc db :common/error error)))

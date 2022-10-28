@@ -3,7 +3,8 @@
   (:import (java.awt Toolkit)
            (java.awt.datatransfer DataFlavor Transferable StringSelection))
   (:require
-   [gadget.middleware :refer [wrap-formats]]))
+   [gadget.middleware :refer [wrap-formats]]
+   [clojure.tools.logging :as log]))
 
 (defn get-clipboard
   []
@@ -31,4 +32,10 @@
                       :body {:message "hello"}})}]
    ["/clipboard" {:get (fn [_]
                          {:status 200
-                          :body {:text (clipboard-get)}})}]])
+                          :body {:text (clipboard-get)}})
+                  :post (fn [req]
+                          (let [text (get-in req [:params :text])]
+                            (log/info "params: " text)
+                            (clipboard-set text)
+                            {:status 200
+                             :body {:text (clipboard-get)}}))}]])
