@@ -83,13 +83,26 @@
  (fn [_ _]
    {:dispatch [:fetch-clipboard]}))
 
+(rf/reg-event-db
+ :toast-message
+ (fn [db [_ message]]
+   (let [id (-> db :toast-message :id (or 0))]
+     (assoc db :toast-message {:msg message
+                               :id (inc id)}))))
+
 (rf/reg-event-fx
  :copy-clipboard
  (fn [_ _]
    (-> js/window
        .getSelection
        (.selectAllChildren
-        (.getElementById js/document "clipboard")))))
+        (.getElementById js/document "clipboard")))
+   (-> js/document
+       (.execCommand "copy"))
+   (-> js/window
+       .getSelection
+       (.removeAllRanges))
+   {:dispatch [:toast-message "Copied to clipboard!"]}))
 
 ;;subscriptions
 
@@ -124,6 +137,11 @@
  :clipboard
  (fn [db _]
    (:clipboard db)))
+
+(rf/reg-sub
+ :toast
+ (fn [db _]
+   (:toast-message db)))
 
 (rf/reg-sub
  :common/error

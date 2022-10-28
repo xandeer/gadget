@@ -1,17 +1,18 @@
 (ns gadget.core
   (:require
-    [day8.re-frame.http-fx]
-    [reagent.dom :as rdom]
-    [reagent.core :as r]
-    [re-frame.core :as rf]
-    [goog.events :as events]
-    [goog.history.EventType :as HistoryEventType]
-    [markdown.core :refer [md->html]]
-    [gadget.ajax :as ajax]
-    [gadget.events]
-    [reitit.core :as reitit]
-    [reitit.frontend.easy :as rfe]
-    [clojure.string :as string])
+   [day8.re-frame.http-fx]
+   [reagent.dom :as rdom]
+   [reagent.core :as r]
+   [re-frame.core :as rf]
+   [goog.events :as events]
+   [goog.history.EventType :as HistoryEventType]
+   [markdown.core :refer [md->html]]
+   [gadget.ajax :as ajax]
+   [gadget.events]
+   [gadget.components :refer [toast]]
+   [reitit.core :as reitit]
+   [reitit.frontend.easy :as rfe]
+   [clojure.string :as string])
   (:import goog.History))
 
 (defn nav-link [uri title page]
@@ -35,7 +36,6 @@
       [:div.navbar-start
        [nav-link "#/" "Home" :home]
        [nav-link "#/about" "About" :about]
-       ;; just try hot-reloading this
        [nav-link "#/clipboard" "Clipboard" :clipboard]]]]))
 
 (defn about-page []
@@ -47,10 +47,17 @@
 
 (defn clipboard-page []
   [:section.section>div.container>div.content
+   (when-let [toast-data @(rf/subscribe [:toast])]
+     (toast (:msg toast-data)))
    (when-let [clipboard @(rf/subscribe [:clipboard])]
      [:div
-      [:h1 "Clipboard"]
-      [:div#clipboard {:on-click #(rf/dispatch [:copy-clipboard])} clipboard]])])
+      [:h1 "Clipboard: Tap contents to copy"]
+      [:div#clipboard {:on-click #(rf/dispatch [:copy-clipboard])
+                       :dangerouslySetInnerHTML
+                       {:__html (string/replace
+                                 clipboard
+                                 #"(\r?\n)"
+                                 "<br/>")}}]])])
 
 (defn home-page []
   [:section.section>div.container>div.content
