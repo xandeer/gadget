@@ -37,7 +37,7 @@
                           :body {:text @clipboard}})
                   :post (fn [req]
                           (let [text (get-in req [:params :text])]
-                            (clipboard-set text)
+                            ;; (clipboard-set text)
                             (reset! clipboard text)
                             {:status 200
                              :body {:text text}}))}]])
