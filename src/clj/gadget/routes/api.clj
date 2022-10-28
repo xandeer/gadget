@@ -24,6 +24,8 @@
     (some-> (get-clipboard)
             (.setContents sel sel))))
 
+(def clipboard (atom ""))
+
 (def api-routes
   ["/api"
    {:middleware [wrap-formats]}
@@ -32,10 +34,10 @@
                       :body {:message "hello"}})}]
    ["/clipboard" {:get (fn [_]
                          {:status 200
-                          :body {:text (clipboard-get)}})
+                          :body {:text @clipboard}})
                   :post (fn [req]
                           (let [text (get-in req [:params :text])]
-                            (log/info "params: " text)
                             (clipboard-set text)
+                            (reset! clipboard text)
                             {:status 200
-                             :body {:text (clipboard-get)}}))}]])
+                             :body {:text text}}))}]])
