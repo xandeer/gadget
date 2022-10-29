@@ -124,12 +124,13 @@
        .getSelection
        (.selectAllChildren
         (.getElementById js/document "clipboard")))
-   (-> js/document
-       (.execCommand "copy"))
-   (-> js/window
-       .getSelection
-       (.removeAllRanges))
-   {:dispatch [:toast-message "Copied to clipboard!"]}))
+   (when (.queryCommandEnabled js/document "copy")
+     (-> js/document
+         (.execCommand "copy"))
+     (-> js/window
+         .getSelection
+         (.removeAllRanges))
+     {:dispatch [:toast-message "Copied to clipboard!"]})))
 
 ;;subscriptions
 

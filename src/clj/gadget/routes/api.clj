@@ -24,6 +24,9 @@
     (some-> (get-clipboard)
             (.setContents sel sel))))
 
+(def is-mac?
+  (= "Mac OS X" (System/getProperty "os.name" "unknown")))
+
 (def clipboard (atom ""))
 
 (def api-routes
@@ -33,11 +36,14 @@
                      {:status 200
                       :body {:message "hello"}})}]
    ["/clipboard" {:get (fn [_]
+                         (when is-mac?
+                           (reset! clipboard (clipboard-get)))
                          {:status 200
                           :body {:text @clipboard}})
                   :post (fn [req]
                           (let [text (get-in req [:params :text])]
-                            ;; (clipboard-set text)
+                            (when is-mac?
+                              (clipboard-set text))
                             (reset! clipboard text)
                             {:status 200
                              :body {:text text}}))}]])

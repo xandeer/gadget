@@ -33,3 +33,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+#clipboard {
+  background: #f8f8f8;
+  padding: 1em;
+  border-radius: 0.5em;
+}
