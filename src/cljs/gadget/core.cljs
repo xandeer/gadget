@@ -6,7 +6,6 @@
    [re-frame.core :as rf]
    [goog.events :as events]
    [goog.history.EventType :as HistoryEventType]
-   [markdown.core :refer [md->html]]
    [gadget.ajax :as ajax]
    [gadget.events]
    [gadget.components :refer [toast]]
@@ -34,9 +33,8 @@
      [:div#nav-menu.navbar-menu
       {:class (when @expanded? :is-active)}
       [:div.navbar-start
-       [nav-link "#/" "Home" :home]
-       [nav-link "#/about" "About" :about]
-       [nav-link "#/clipboard" "Clipboard" :clipboard]]]]))
+       [nav-link "#/" "Clipboard" :clipboard]
+       [nav-link "#/about" "About" :about]]]]))
 
 (defn about-page []
   [:section.section>div.container>div.content
@@ -67,11 +65,6 @@
                                  #"(\r?\n)"
                                  "<br/>")}}]])])
 
-(defn home-page []
-  [:section.section>div.container>div.content
-   (when-let [docs @(rf/subscribe [:docs])]
-     [:div {:dangerouslySetInnerHTML {:__html (md->html docs)}}])])
-
 (defn page []
   (if-let [page @(rf/subscribe [:common/page])]
     [:div
@@ -83,14 +76,11 @@
 
 (def router
   (reitit/router
-   [["/" {:name :home
-          :view #'home-page
-          :controllers [{:start (fn [_] (rf/dispatch [:page/init-home]))}]}]
+   [["/" {:name :clipboard
+          :view #'clipboard-page
+          :controllers [{:start (fn [_] (rf/dispatch [:page/init-clipboard]))}]}]
     ["/about" {:name :about
-               :view #'about-page}]
-    ["/clipboard" {:name :clipboard
-                   :view #'clipboard-page
-                   :controllers [{:start (fn [_] (rf/dispatch [:page/init-clipboard]))}]}]]))
+               :view #'about-page}]]))
 
 (defn start-router! []
   (rfe/start!

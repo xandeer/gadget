@@ -27,19 +27,6 @@
     {:common/navigate-fx! [url-key params query]}))
 
 (rf/reg-event-db
-  :set-docs
-  (fn [db [_ docs]]
-    (assoc db :docs docs)))
-
-(rf/reg-event-fx
- :fetch-docs
- (fn [_ _]
-   {:http-xhrio {:method          :get
-                 :uri             "/docs"
-                 :response-format (ajax/raw-response-format)
-                 :on-success       [:set-docs]}}))
-
-(rf/reg-event-db
  :update-hello
  (fn [db [_ data]]
    (println "update-hello" data)
@@ -101,11 +88,6 @@
    (assoc db :common/error error)))
 
 (rf/reg-event-fx
-  :page/init-home
-  (fn [_ _]
-    {:dispatch [:fetch-docs]}))
-
-(rf/reg-event-fx
  :page/init-clipboard
  (fn [_ _]
    {:dispatch [:fetch-clipboard]}))
@@ -150,11 +132,6 @@
   :<- [:common/route]
   (fn [route _]
     (-> route :data :view)))
-
-(rf/reg-sub
-  :docs
-  (fn [db _]
-    (:docs db)))
 
 (rf/reg-sub
  :hello
