@@ -8,10 +8,10 @@
    [goog.history.EventType :as HistoryEventType]
    [gadget.ajax :as ajax]
    [gadget.events]
+   [gadget.pages.clipboard :refer [clipboard-page]]
    [gadget.components :refer [toast]]
    [reitit.core :as reitit]
-   [reitit.frontend.easy :as rfe]
-   [clojure.string :as string])
+   [reitit.frontend.easy :as rfe])
   (:import goog.History))
 
 (defn nav-link [uri title page]
@@ -42,28 +42,6 @@
           :on-click #(rf/dispatch [:fetch-hello])}]
    (when-let [hello @(rf/subscribe [:hello])]
      [:h1 (:data  hello) " " (:time hello)])])
-
-(defn clipboard-page []
-  [:section.section>div.container>div.content
-   [:h2 "Clipboard"]
-   [:form {:style {:display "flex" :margin "2rem auto"}}
-    [:label "Text to send:"]
-    [:input.input {:type "text"
-                   :on-change #(rf/dispatch [:set-clipboard-text (-> % .-target .-value)])
-                   :on-key-down #(when (= 13 (.-keyCode %))
-                                   (rf/dispatch [:send-clipboard-text]))}]
-    [:button.button {:type "button"
-                     :on-click #(rf/dispatch [:send-clipboard-text])} "Send"]]
-   (when-let [toast-data @(rf/subscribe [:toast])]
-     (toast (:msg toast-data)))
-   (when-let [clipboard @(rf/subscribe [:clipboard])]
-     [:div {:on-click #(rf/dispatch [:copy-clipboard])}
-      [:h2 "Tap contents or here to copy"]
-      [:div#clipboard {:dangerouslySetInnerHTML
-                       {:__html (string/replace
-                                 clipboard
-                                 #"(\r?\n)"
-                                 "<br/>")}}]])])
 
 (defn page []
   (if-let [page @(rf/subscribe [:common/page])]
