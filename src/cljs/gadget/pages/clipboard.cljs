@@ -21,9 +21,10 @@
    (when-let [toast-data @(rf/subscribe [:toast])]
      (toast (:msg toast-data)))
    (when-let [clipboard @(rf/subscribe [:clipboard])]
-     [:div {:on-click #(rf/dispatch [:copy-clipboard])}
-      [:h2 "Tap contents or here to copy"]
-      [:div#clipboard {:dangerouslySetInnerHTML
+     [:div
+      [:h2 {:on-click #(rf/dispatch [:fetch-clipboard])} "Tap here to refetch, tap contents to copy"]
+      [:div#clipboard {:on-click #(rf/dispatch [:copy-clipboard])
+                       :dangerouslySetInnerHTML
                        {:__html (string/replace
                                  clipboard
                                  #"(\r?\n)"
